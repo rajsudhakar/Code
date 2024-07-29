@@ -1,0 +1,5 @@
+<apex:page Controller="I_SearchController" action="{!initializeOfferPop}" title="Client/Entity Search" id="pg" tabstyle="SearchClients__tab">
+<script src="{!$Resource.jquery}"></script>
+<apex:includeScript value="/support/console/40.0/integration.js"/>
+<script src="../../soap/ajax/32.0/connection.js" type="text/javascript"></script>
+<script type="text/javascript">
