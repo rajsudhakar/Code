@@ -3,3 +3,75 @@
 <apex:includeScript value="/support/console/40.0/integration.js"/>
 <script src="../../soap/ajax/32.0/connection.js" type="text/javascript"></script>
 <script type="text/javascript">
+    $(function() {
+        //Set the console Flag if this page is opened in Console
+        if(sforce.console.isInConsole()) {
+            setConsoleFlag();
+            
+        }
+    });
+    
+    $(document).ready(function() {
+        if (sforce.console.isInConsole()) {
+            try {
+                sforce.console.getEnclosingPrimaryTabId(function(primarytab) {
+                    // Set the Tab Name and Icon
+                    if(primarytab != "null" && primarytab.id != "null") {
+                        sforce.console.setTabTitle('Client Search', primarytab.id);
+                    }
+                });
+            }
+            catch(err) {}
+        }
+    });
+
+    $(document).keypress(function(e) {
+       if (e.keyCode == 13){
+        var allElements = document.getElementsByTagName('*');
+        for (var i = 0; i < allElements.length; i++){
+          if (allElements[i].id.indexOf("CS_SEARCH_BUTTON") !=-1){
+            allElements[i].click();
+          }
+        }
+        return false;
+      }
+      else{
+        return true;
+      }
+   });
+   
+   /**
+   * Navigate Client to Console Tab
+   */
+   function goToDetailPage4Console(hasClientSummAccess, ssn, dnis, source, vruApp, eduId, caseId, AuthenticatedFlag, caseorigin, clientType) {
+        console.log('Line 47')
+        if(hasClientSummAccess) {
+            url = '/apex/RRPage?fromSearch=1&clientID=' + ssn + '&DNIS=' + dnis + '&Source=' + source + '&vruApp=' + vruApp + '&ctiEDU=' + eduId +'&AuthenticatedFlag=' + AuthenticatedFlag + '&type=' + caseorigin + '&caseId=' + caseId + '&opID={!offerPopObject.Id}' + '&clientType=' + clientType;
+        } else {
+            console.log('Line 51')
+            url = '/apex/CTIPage?fromSearch=1&clientID=' + ssn + '&DNIS=' + dnis + '&Source=' + source + '&vruApp=' + vruApp + '&ctiEDU=' + eduId + '&AuthenticatedFlag=' + AuthenticatedFlag + '&type=' + caseorigin + '&caseId=' + caseId + '&opID={!offerPopObject.Id}' + '&clientType=' + clientType;
+        }
+        if (sforce.console.isInConsole()) {
+            url += '&open_in_console=on';
+            try {
+                sforce.console.getEnclosingPrimaryTabId(function(primarytab) {
+                    if(primarytab != "null" && primarytab.id != "null") {
+                        sforce.console.openPrimaryTab(primarytab.id, url, true);
+                    }
+                    else {
+                        sforce.console.openPrimaryTab(null, url, true);
+                    }
+                });
+            }
+            catch(err){}
+            
+        }
+        else { //Just a Safety Check
+            url += '&open_in_console=off';
+            window.open(url, '_self');
+        }
+        
+        return false;
+    }
+    
+</script>
